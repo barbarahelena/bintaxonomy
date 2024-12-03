@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/mag/master/nextflow_schema.json",
+    "title": "nf-core/mag pipeline parameters",
+    "description": "Assembly, binning and annotation of metagenomes",
+    "type": "object",
+    "definitions": {
+        "sample": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sample": {
+                        "type": "string",
+                        "pattern": "^\\S+$",
+                        "errorMessage": {
+                            "pattern": "Sample name must be provided and cannot contain spaces"
+                        },
+                        "meta": ["id"]
+                    },
+                    "name": {
+                        "type": "string",
+                        "pattern": "^\\S+$",
+                        "errorMessage": {
+                            "pattern": "Sample name must be provided and cannot contain spaces"
+                        },
+                        "meta": ["bin"]
+                    },
+                    "path": {
+                        "type": "string",
+                        "pattern": "^\\S+$",
+                        "meta": ["path"],
+                        "errorMessage": {
+                            "pattern": "Column 'path' contains an empty field. Either remove column 'path' or fill each field with a value."
+                        }
+                    }
+                },
+                "required": ["sample", "name", "path"]
+            }
+        }
+    }
+}
