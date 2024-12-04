@@ -39,8 +39,6 @@ process KRAKEN2 {
         kraken2 --db ${database} \\
                 --threads ${task.cpus} \\
                 "\$bin" \\
-                --confidence 0.01 \\
-                --quick \\
                 --use-names \\
                 --report "kraken2_\${binname}_report.txt" \\
                 --classified-out "out_\${binname}_classified.fa"
