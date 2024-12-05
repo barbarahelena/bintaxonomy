@@ -2,22 +2,23 @@
 import pandas as pd
 import argparse
 import sys
+import os.path
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-d",
-        "--depths",
+        "-td",
+        "--taxdepth",
         required=True,
         metavar="FILE",
-        help="Bin depths summary file.",
+        help="Taxonomy and depths table.",
     )
     parser.add_argument(
-        "-t",
-        "--tax",
+        "-s",
+        "--salt",
         required=True,
         metavar="FILE",
-        help="Bin depths summary file.",
+        help="Salt genes summary file.",
     )
     parser.add_argument(
         "-o",
@@ -30,27 +31,23 @@ def parse_args(args=None):
     return parser.parse_args(args)
 
 def main(args=None):
+    args = parse_args(args)
+
     # Load the data into a DataFrame without headers and set custom column names
-    df = pd.read_csv(args.depths, sep='\t', header=0)
-    df = df.rename(columns={"bin": "Bin"})
+    df = pd.read_csv(args.salt, sep='\t', header=0)
+    df = df.rename(columns={"bin_id": "Bin", "sample_id": "Sample"})
     # print(df.columns)  # Check if the headers are read correctly
 
-    # Strip the .fa.gz suffix from the 'Bin' column
-    df["Bin"] = df["Bin"].str.replace(".fa.gz", "", regex=False)
-
-    # Convert to long format
-    df_long = df.melt(id_vars=["Bin"], var_name="Sample", value_name="Depth")
-
     # Load taxonomy table
-    taxonomy_df = pd.read_csv(args.tax, sep='\t')
+    taxonomy_df = pd.read_csv(args.taxdepth, sep='\t')
 
     # Merge the tables on 'Sample' and 'Bin'
-    merged_df = pd.merge(df_long, taxonomy_df, on=["Sample", "Bin"], how="inner")
+    merged_df = pd.merge(df, taxonomy_df, on=["Sample", "Bin"], how="inner")
 
     # Save the merged table to a new file
     merged_df.to_csv(args.out, sep='\t', index=False)
 
     print(f"Merged table saved to {args.out}")
-
+    
 if __name__ == "__main__":
     sys.exit(main())
